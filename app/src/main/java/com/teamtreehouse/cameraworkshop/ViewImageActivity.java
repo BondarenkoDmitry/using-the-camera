@@ -24,3 +24,9 @@ public class ViewImageActivity extends AppCompatActivity {
         Picasso.with(this).load(imageUri).into(imageView);
     }
 }
+
+
+//Picasso.with(this).load(imageUri)
+// .resize(800,0)
+// .fit()
+// .into(imageView);
