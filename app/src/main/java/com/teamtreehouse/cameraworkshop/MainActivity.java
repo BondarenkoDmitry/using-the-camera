@@ -43,11 +43,28 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_TAKE_PHOTO) {
+            if (requestCode == REQUEST_TAKE_PHOTO || requestCode == REQUEST_PICK_PHOTO) {
+                if (data != null){
+                    mMediaUri = data.getData();
+                }
                 Intent intent = new Intent(this, ViewImageActivity.class);
                 intent.setData(mMediaUri);
                 startActivity(intent);
+
+
+            } else if (requestCode == REQUEST_TAKE_VIDEO){
+                Intent intent = new Intent(Intent.ACTION_VIEW, mMediaUri);
+                intent.setDataAndType(mMediaUri, "video/*");
+                startActivity(intent);
             }
+            else if (requestCode == REQUEST_PICK_VIDEO){
+                if (data != null){
+                    Log.i(TAG, "Video content URI: " + data.getData());
+                    Toast.makeText(this, "Video content URI: " + data.getData(),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
         }
         else if (resultCode != RESULT_CANCELED) {
             Toast.makeText(this, "Sorry, there was an error!", Toast.LENGTH_LONG).show();
@@ -82,19 +99,22 @@ public class MainActivity extends AppCompatActivity {
             takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
             takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
             startActivityForResult(takeVideoIntent, REQUEST_TAKE_VIDEO);
-
         }
 
     }
 
     @OnClick(R.id.pickPhoto)
     void pickPhoto() {
-
+        Intent pickPhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        pickPhotoIntent.setType("image/*");
+        startActivityForResult(pickPhotoIntent, REQUEST_PICK_PHOTO);
     }
 
     @OnClick(R.id.pickVideo)
     void pickVideo() {
-
+        Intent pickVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        pickVideoIntent.setType("video/*");
+        startActivityForResult(pickVideoIntent, REQUEST_PICK_VIDEO);
     }
 
     private Uri getOutputMediaFileUri(int mediaType) {
